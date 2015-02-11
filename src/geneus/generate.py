@@ -511,6 +511,9 @@ def write_deserialize_field(s, f, pkg):
                         s.write('(setq n (sys::peek buf ptr- :integer)) (incf ptr- 4)')
                         if is_string(f.base_type):
                             s.write('(setq %s (make-list n))'%var)
+                        elif lisp_type(f.base_type) == "char":
+                            # we need to use integer vector for char array
+                            s.write('(setq %s (instantiate integer-vector n))'%(var))
                         else:
                             s.write('(setq %s (instantiate %s-vector n))'%(var, lisp_type(f.base_type)))
                         s.write('(dotimes (i n)')
